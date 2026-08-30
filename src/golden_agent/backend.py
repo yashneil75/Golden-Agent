@@ -144,20 +144,20 @@ def _ensure_daemon() -> None:
     )
 
 
-def _send_to_daemon(payload: dict, retries: int = 25) -> dict:
+def _send_to_daemon(payload: dict, retries: int = 25, timeout: float = 0.5) -> dict:
     """Send a JSON command to the daemon and return its parsed response."""
     last_err: Exception | None = None
     for _ in range(retries):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.settimeout(2)
+                s.settimeout(timeout)
                 s.connect(("127.0.0.1", CONTROL_PORT))
                 s.sendall((json.dumps(payload) + "\n").encode())
                 raw = s.recv(65536)
             return json.loads(raw.decode().strip())
         except Exception as exc:  # daemon may still be starting up
             last_err = exc
-            time.sleep(0.2)
+            time.sleep(0.1)
     raise RuntimeError(f"server daemon unreachable: {last_err}")
 
 
@@ -517,9 +517,10 @@ def stop_server() -> None:
     global _server_pid, _server_port
 
     port = _server_port or DEFAULT_PORT
-    # Ask the daemon to stop the server it owns (and its monitor).
+    # Ask the daemon to stop the server it owns (and its monitor). A dead or
+    # not-yet-started daemon is expected here, so fail fast instead of hanging.
     try:
-        _send_to_daemon({"cmd": "STOP", "port": port})
+        _send_to_daemon({"cmd": "STOP", "port": port}, retries=2)
     except Exception:
         pass
 

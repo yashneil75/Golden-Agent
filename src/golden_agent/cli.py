@@ -106,9 +106,8 @@ def _lazy_bootstrap() -> None:
 
     main_cached = model_cached(filename=spec.filename, expected_size=spec.size_bytes)
     draft_cached = (
-        spec.draft_filename is not None
-        and spec.draft_size_bytes is not None
-        and model_cached(filename=spec.draft_filename, expected_size=spec.draft_size_bytes)
+        spec.draft_filename is None
+        or model_cached(filename=spec.draft_filename, expected_size=spec.draft_size_bytes)
     )
 
     if main_cached and draft_cached:

@@ -76,7 +76,7 @@ def _collect_note(console: Console) -> str:
 
     console.print()
     try:
-        return prompt("❯ ", message="❯ ").strip()
+        return prompt("❯ ").strip()
     except (EOFError, KeyboardInterrupt):
         return ""
 
