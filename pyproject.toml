@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "golden-agent"
+version = "0.1.0"
+description = "Your local AI agent. Runs on basically any hardware — auto-setup, GPU-accelerated, zero cloud, zero API keys."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Yashneil Gajjala", email = "yashneil75@gmail.com" }]
+keywords = [
+    "agent",
+    "cli",
+    "coding-agent",
+    "gguf",
+    "llama-cpp",
+    "llm",
+    "local",
+    "local-llm",
+    "offline",
+    "tools",
+    "vulkan",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "httpx>=0.27.0",
+    "rich>=13.0.0",
+    "markrender>=1.0.7",
+    "ddgs>=9.0.0",
+    "prompt_toolkit>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+golden-agent = "golden_agent.cli:repl"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/golden_agent"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/golden_agent/config.py" = ["E501"]
+"src/golden_agent/cli.py" = ["E501"]
+"src/golden_agent/system_prompt.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
